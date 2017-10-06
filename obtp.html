@@ -20,9 +20,18 @@
     <!-- Custom CSS -->
     <link href="https://filedepot.cdw.com/stylish-portfolio.css" rel="stylesheet">
 		
+		<!-- Moment.js Date Range Picker Required Prerequisites -->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+ 
+		<!-- Moment.js Date Range Picker -->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+		
 		<script>
 			var xmlHttp = new XMLHttpRequest(); //returns a XMLHttpRequest object
 			
+			//after entering an IP, open a BootStrap warning notice informing user that they must first accept the self-signed certificate of their device
 			function sslWarning() {
 				var ip = document.getElementById('ip').value;
 				var ssl = document.getElementById('alert_ssl');
@@ -54,17 +63,50 @@
 				acknowledgements.innerHTML = `<p><a href="#" class="btn btn-lt btn-sm" onclick="acknowledgements()">Acknowledgements</a></p>`;
 				
 			};
+
+			//date range picker variables for pre-population
+			var now = new Date();
+			var now2 = new Date();
+			var nowplus4minutes = new Date(now.setMinutes(now.getMinutes() + 4));
+			var nowplus14minutes = new Date(now.setMinutes(now.getMinutes() + 15));
 			
+			//date range picker attachment
+			$(function() {
+				$('input[name="datetime"]').daterangepicker({
+					startDate: nowplus4minutes,
+					endDate: nowplus14minutes,
+					minDate: now2,
+					showDropdowns: false,
+					timePicker: true,
+					timePickerIncrement: 1,
+					timePicker24Hour: true,
+					locale: {
+						format: 'MM/DD/YYYY h:mm A'
+					}
+				});
+			});
+			
+			//function to remove seconds from ISO time, b/c moment.js was being strange
+			function removeMilliseconds(date) {
+				var dateString = date.toISOString()
+
+				dateStringNoMilliseconds = dateString.substring(0, dateString.indexOf('.'))
+			
+				dateStringNoMilliseconds += "Z"
+				
+			  return dateStringNoMilliseconds
+			}
+			
+			//when "Set the Meeting" is clicked, perform a POST with the XML for OBTP
 			function setMeeting() { 
 				var mimeType = "text/plain";  
 				var ip = document.getElementById('ip').value;
 				var title = document.getElementById('title').value;
 				var uri = document.getElementById('uri').value;
-				var now = new Date();
-				var nowplus4minutes = new Date(now.setMinutes(now.getMinutes() + 4));
-				var nowplus14minutes = new Date(now.setMinutes(now.getMinutes() + 14));
-				var pseudoiso4minutes = nowplus4minutes.toISOString().split('.')[0]+"Z";
-				var pseudoiso14minutes = nowplus14minutes.toISOString().split('.')[0]+"Z";
+				var uri = document.getElementById('uri').value;
+				
+				var startTime = removeMilliseconds($('#datetime').data('daterangepicker').startDate._d);
+				var endTime = removeMilliseconds($('#datetime').data('daterangepicker').endDate._d);
 				
 				var url = `https://${ip}/bookingsputxml`;
 				var xml = `<?xml version='1.0'?>
@@ -80,9 +122,9 @@
       <Email item="1"></Email>
     </Organizer>
     <Time item="1">
-      <StartTime item="1">${pseudoiso4minutes}</StartTime>
+      <StartTime item="1">${startTime}</StartTime>
       <StartTimeBuffer item="1">300</StartTimeBuffer>
-      <EndTime item="1">${pseudoiso14minutes}</EndTime>
+      <EndTime item="1">${endTime}</EndTime>
       <EndTimeBuffer item="1">0</EndTimeBuffer>
     </Time>
     <MaximumMeetingExtension item="1">5</MaximumMeetingExtension>
@@ -110,21 +152,25 @@
   </Booking>
 </Bookings>`;
 
-				xmlHttp.open('POST', url, true);
-				xmlHttp.withCredentials = true;
 
+				xmlHttp.open('POST', url, true);
 				xmlHttp.setRequestHeader('Content-Type', mimeType);
+				xmlHttp.withCredentials = true;
+				
 				xmlHttp.send(xml); 
 			}
-
+			
+			//notice for "success" - even though JavaScript sandboxing and CORS issues prevent any meaningful error detection or "error code" information
 			xmlHttp.onreadystatechange = function() {
 				var ip = document.getElementById('ip').value;
 				if (xmlHttp.readyState === 4) {
 					var obtp = document.getElementById('alert_obtp');
 					obtp.className = "alert alert-success alert-dismissable text-left"
 					obtp.innerHTML = `<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="obtpClose()">&times;</button><p class="pr-5"><strong>Meeting data sent</strong> - check that the OBTP meeting is present.</p>`;
+					xmlHttp.readyState = 0;
 			  }
 			}
+			
 			
 		</script>
 
@@ -151,6 +197,12 @@
 							<label for="title" class="col-4 col-form-label text-left">Meeting Title:</label>
 							<div class="col-10">
 								<input class="form-control" type="text" name="title" id="title" placeholder="OBTP Demo 1" />
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="datetime" class="col-4 col-form-label text-left">Meeting Date/Time:</label>
+							<div class="col-10">
+								<input class="form-control" type="text" name="datetime" id="datetime" placeholder="click to open date range picker" />
 							</div>
 						</div>
 						<div class="form-group row">

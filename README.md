@@ -37,10 +37,13 @@ Due to browser JavaScript sandboxing and lack of CORS support on Cisco TelePrese
 * [Bootstrap](http://www.getbootstrap.com/), Copyright (c) 2011-2014 Twitter, Inc. [http://www.getbootstrap.com](http://www.getbootstrap.com/)
 * [Font Awesome](http://fontawesome.io/) by Dave Gandy - [http://fontawesome.io](http://fontawesome.io)
 * Background image courtesy of [Cisco Systems, Inc.](http://www.cisco.com), Unauthorized use not permitted.
+* [Moment.js](http://momentjs.com) - [http://momentjs.com](http://momentjs.com/)
+* [Daterangepicker](http://www.daterangepicker.com) by Dan Grossman - [http://www.daterangepicker.com/](http://www.daterangepicker.com/)
+* [jQuery](http://jquery.org) - [http://jquery.org](http://jquery.org)
 
 ## Authors
 
-* Nick Mueller, CDW
+* Nick Mueller, [CDW](http://www.cdw.com)
 
 ## License
 
@@ -50,4 +53,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 * Hat tip to James Adams, CDW, for challenging me with the idea
 * Hat tip to David Bruun-Lie, Cisco Systems, for some code pointers
-

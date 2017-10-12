@@ -27,6 +27,8 @@ A number of variables are hard-coded in the HTML page, but could easily be chang
 * The meeting start time is automatically set to five (5) minutes from the current time
 * The meeting end time is automatically set to fifteen (15) minutes from the current time
 
+However, the date range picker does allow you to set your own meeting times if the defaults don't suit.
+
 ## Notes
 
 Due to browser JavaScript sandboxing and lack of CORS support on Cisco TelePresence, only limited error detection is possible.  Sorry!

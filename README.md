@@ -17,7 +17,7 @@ The HTML file has only undergone limited testing with:
 
 However, it should work with essentially all current endpoints and software.  Devices are supported whether standalone, registered to Cisco VCS or Expressway, registered to Cisco Unified Communications Manager, or registered to other 3rd party call control platforms.
 
-**Important note:** There is no support for devices registered to Cisco Spark, due to how Cisco Spark changes web services API authentication.
+**Important note:** This has been tested, and works, with Webex Cloud registered endpoints. However it does require accessing the endpoint's "Advanced Settings" via the Webex Control Hub and creating an "admin" user. Because this is an undocumented API, ROOMCONTROL and INTEGRATOR user account roles do not work to push there OBTP button out to the endpoint; it has to be the admin user credentials that you create above.
 
 ## Hard coded meeting variables
 

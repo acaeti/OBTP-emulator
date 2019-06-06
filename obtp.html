@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>One Button to Push (OBTP) Emulator</title>
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Custom Fonts -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
-    <!-- Custom CSS -->
-    <link href="https://filedepot.cdw.com/stylish-portfolio.css" rel="stylesheet">
-		<!-- Moment.js Date Range Picker Required Prerequisites -->
-		<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
-		<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-		<!-- Moment.js Date Range Picker -->
-		<script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-		<script>
-			//returns a XMLHttpRequest object
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>One Button to Push (OBTP) Emulator</title>
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- Custom Fonts -->
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <!-- Custom CSS -->
+  <link href="https://filedepot.cdw.com/stylish-portfolio.css" rel="stylesheet">
+  <!-- Moment.js Date Range Picker Required Prerequisites -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <!-- Moment.js Date Range Picker -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+  <script>
+
+    //returns a XMLHttpRequest object
 			var xmlHttp = new XMLHttpRequest();
-			
+			var alertClass;
+			var alertText;
+
 			//after entering an IP, open a BootStrap warning notice informing user that they must first accept the self-signed certificate of their device
 			function sslWarning() {
 				var ip = document.getElementById('ip').value;
@@ -42,7 +46,7 @@
 				ssl.className = ""
 				ssl.innerHTML = ``;
 			};
-			
+
 			function acknowledgements() {
 				var acknowledgements = document.getElementById('alert_acknowledgements');
 				acknowledgements.className = "alert alert-info alert-dismissable text-left"
@@ -60,7 +64,7 @@
 			var now2 = new Date();
 			var nowplus4minutes = new Date(now.setMinutes(now.getMinutes() + 4));
 			var nowplus14minutes = new Date(now.setMinutes(now.getMinutes() + 15));
-			
+
 			//date range picker attachment
 			$(function() {
 				$('input[name="datetime"]').daterangepicker({
@@ -76,7 +80,7 @@
 					}
 				});
 			});
-			
+
 			//function to remove seconds from ISO time, b/c moment.js was being strange
 			function removeMilliseconds(date) {
 				var dateString = date.toISOString()
@@ -84,121 +88,157 @@
 				dateStringNoMilliseconds += "Z"
 			  return dateStringNoMilliseconds
 			}
-			
-			//when "Set the Meeting" is clicked, perform a POST with the XML for OBTP
-			function setMeeting() { 
-				var mimeType = "text/plain";  
+
+			//when "Set the Meeting" or "Clear the meeting" is clicked, perform a POST with the appropriate XML for OBTP
+			function sendCommand(action) {
+
+
+
+				var mimeType = "text/plain";
 				var ip = document.getElementById('ip').value;
-				var title = document.getElementById('title').value;
-				var uri = document.getElementById('uri').value;
-				var uri = document.getElementById('uri').value;
-				var startTime = removeMilliseconds($('#datetime').data('daterangepicker').startDate._d);
-				var endTime = removeMilliseconds($('#datetime').data('daterangepicker').endDate._d);
 				var url = `https://${ip}/bookingsputxml`;
 
-				var xml = `<?xml version='1.0'?>
-<Bookings item="1" status="OK">
-  <Booking item="1">
-    <Id item="1">1</Id>
-    <Title item="1">${title}</Title>
-    <Agenda item="1"></Agenda>
-    <Privacy item="1">Public</Privacy>
-    <Organizer item="1">
-      <FirstName item="1">Demo</FirstName>
-      <LastName item="1"></LastName>
-      <Email item="1"></Email>
-    </Organizer>
-    <Time item="1">
-      <StartTime item="1">${startTime}</StartTime>
-      <StartTimeBuffer item="1">300</StartTimeBuffer>
-      <EndTime item="1">${endTime}</EndTime>
-      <EndTimeBuffer item="1">0</EndTimeBuffer>
-    </Time>
-    <MaximumMeetingExtension item="1">5</MaximumMeetingExtension>
-    <BookingStatus item="1">OK</BookingStatus>
-    <BookingStatusMessage item="1"></BookingStatusMessage>
-    <Webex item="1">
-      <Enabled item="1">False</Enabled>
-      <MeetingNumber item="1"></MeetingNumber>
-      <Password item="1"></Password>
-    </Webex>
-    <Encryption item="1">BestEffort</Encryption>
-    <Role item="1">Master</Role>
-    <Recording item="1">Disabled</Recording>
-    <DialInfo item="1">
-      <Calls item="1">
-        <Call item="1">
-          <Number item="1">${uri}</Number>
-          <Protocol item="1">SIP</Protocol>
-          <CallRate item="1">6000</CallRate>
-          <CallType item="1">Video</CallType>
-        </Call>
-      </Calls>
-      <ConnectMode item="1">OBTP</ConnectMode>
-    </DialInfo>
-  </Booking>
-</Bookings>`;
+				if(ip) {
 
-				xmlHttp.open('POST', url, true);
-				xmlHttp.setRequestHeader('Content-Type', mimeType);
-				xmlHttp.withCredentials = true;
-				xmlHttp.send(xml); 
+					switch(action) {
+
+						case "set":
+
+							var title = document.getElementById('title').value;
+							var uri = document.getElementById('uri').value;
+							var startTime = removeMilliseconds($('#datetime').data('daterangepicker').startDate._d);
+							var endTime = removeMilliseconds($('#datetime').data('daterangepicker').endDate._d);
+
+							var xml = `<?xml version='1.0'?>
+								<Bookings item="1" status="OK">
+								  <Booking item="1">
+								    <Id item="1">1</Id>
+								    <Title item="1">${title}</Title>
+								    <Agenda item="1"></Agenda>
+								    <Privacy item="1">Public</Privacy>
+								    <Organizer item="1">
+								      <FirstName item="1">Demo</FirstName>
+								      <LastName item="1"></LastName>
+								      <Email item="1"></Email>
+								    </Organizer>
+								    <Time item="1">
+								      <StartTime item="1">${startTime}</StartTime>
+								      <StartTimeBuffer item="1">300</StartTimeBuffer>
+								      <EndTime item="1">${endTime}</EndTime>
+								      <EndTimeBuffer item="1">0</EndTimeBuffer>
+								    </Time>
+								    <MaximumMeetingExtension item="1">5</MaximumMeetingExtension>
+								    <BookingStatus item="1">OK</BookingStatus>
+								    <BookingStatusMessage item="1"></BookingStatusMessage>
+								    <Webex item="1">
+								      <Enabled item="1">False</Enabled>
+								      <MeetingNumber item="1"></MeetingNumber>
+								      <Password item="1"></Password>
+								    </Webex>
+								    <Encryption item="1">BestEffort</Encryption>
+								    <Role item="1">Master</Role>
+								    <Recording item="1">Disabled</Recording>
+								    <DialInfo item="1">
+								      <Calls item="1">
+								        <Call item="1">
+								          <Number item="1">${uri}</Number>
+								          <Protocol item="1">SIP</Protocol>
+								          <CallRate item="1">6000</CallRate>
+								          <CallType item="1">Video</CallType>
+								        </Call>
+								      </Calls>
+								      <ConnectMode item="1">OBTP</ConnectMode>
+								    </DialInfo>
+								  </Booking>
+								</Bookings>`;
+
+							alertClass = 'alert-success';
+							alertText = '<p class="pr-5"><strong>Meeting data sent</strong> - check that the OBTP meeting is present.</p>';
+
+
+						break;
+
+						case "clear":
+
+							var xml = '<?xml version=\'1.0\'?><Bookings><Clear command="True"></Clear></Bookings>';
+
+							alertClass = 'alert-danger';
+							alertText = '<p class="pr-5"><strong>Meeting data cleared</strong> - check that the OBTP meeting is erased.</p>';
+
+
+						break;
+					}
+
+
+					xmlHttp.open('POST', url, true);
+					xmlHttp.setRequestHeader('Content-Type', mimeType);
+					xmlHttp.withCredentials = true;
+					xmlHttp.send(xml);
+
+				} else {
+					alert("Please provide an IP address.");
+				}
 			}
-			
+
 			//notice for "success" - even though JavaScript sandboxing and CORS issues prevent any meaningful error detection or "error code" information
 			xmlHttp.onreadystatechange = function() {
-				var ip = document.getElementById('ip').value;
 				if (xmlHttp.readyState === 4) {
 					var obtp = document.getElementById('alert_obtp');
-					obtp.className = "alert alert-success alert-dismissable text-left"
-					obtp.innerHTML = `<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="obtpClose()">&times;</button><p class="pr-5"><strong>Meeting data sent</strong> - check that the OBTP meeting is present.</p>`;
+					obtp.className = `alert ${alertClass} alert-dismissable text-left`
+					obtp.innerHTML = `<button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="obtpClose()">&times;</button>${alertText}`;
 					xmlHttp.readyState = 0;
 			  }
 			}
 		</script>
-  </head>
-  <body>
-    <!-- Header -->
-    <header class="header" id="top">
-      <div class="text-vertical-center">
-        <h1>One Button To Push (OBTP) Emulator</h1>
-        <p>Enter the required information and click "Set the Meeting" to setup an OBTP meeting.  You will be prompted for credentials for the target device.</p>
-        <br>
-	      <div class="container text-center" style="max-width: 50%;">
-					<div id="alert_obtp"></div>
-					<form>
-						<div class="form-group row">
-							<label for="ip" class="col-4 col-form-label text-left">Device IP address:</label>
-							<div class="col-10">
-								<input class="form-control" type="text" name="ip" id="ip" placeholder="Example: 10.0.0.10" onblur="sslWarning();" />
-							</div>
-						</div>
-						<div id="alert_ssl"></div>
-						<div class="form-group row">
-							<label for="title" class="col-4 col-form-label text-left">Meeting Title:</label>
-							<div class="col-10">
-								<input class="form-control" type="text" name="title" id="title" placeholder="Example: OBTP Demo 1" />
-							</div>
-						</div>
-						<div class="form-group row">
-							<label for="datetime" class="col-4 col-form-label text-left">Meeting Date/Time:</label>
-							<div class="col-10">
-								<input class="form-control" type="text" name="datetime" id="datetime" placeholder="click to open date range picker" />
-							</div>
-						</div>
-						<div class="form-group row">
-							<label for="uri" class="col-4 col-form-label text-left">SIP URI:</label>
-							<div class="col-10">
-								<input class="form-control" type="text" name="uri" id="uri" placeholder="Example: user@some.webex.com" />
-							</div>
-						</div>
-					</form>
-	      </div>
-        <p><a href="#" class="btn btn-dark btn-lg" onclick="setMeeting()">Set the Meeting</a></p>
-				<div id="alert_acknowledgements">
-					<p><a href="#" class="btn btn-lt btn-sm" onclick="acknowledgements()">Acknowledgements</a></p>
-				</div>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header" id="top">
+    <div class="text-vertical-center">
+      <h1>One Button To Push (OBTP) Emulator</h1>
+      <p>Enter the required information and click "Set the Meeting" to setup an OBTP meeting. You will be prompted for credentials for the target device.</p>
+      <br>
+      <div class="container text-center" style="max-width: 50%;">
+        <form>
+          <div class="form-group row">
+            <label for="ip" class="col-4 col-form-label text-left">Device IP address:</label>
+            <div class="col-10">
+              <input class="form-control" type="text" name="ip" id="ip" placeholder="Example: 10.0.0.10" onblur="sslWarning();" />
+            </div>
+          </div>
+          <div id="alert_ssl"></div>
+          <div class="form-group row">
+            <label for="title" class="col-4 col-form-label text-left">Meeting Title:</label>
+            <div class="col-10">
+              <input class="form-control" type="text" name="title" id="title" placeholder="Example: OBTP Demo 1" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="datetime" class="col-4 col-form-label text-left">Meeting Date/Time:</label>
+            <div class="col-10">
+              <input class="form-control" type="text" name="datetime" id="datetime" placeholder="click to open date range picker" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="uri" class="col-4 col-form-label text-left">SIP URI:</label>
+            <div class="col-10">
+              <input class="form-control" type="text" name="uri" id="uri" placeholder="Example: user@some.webex.com" />
+            </div>
+          </div>
+        </form>
+        <div id="alert_obtp"></div>
       </div>
-    </header>
-  </body>
+
+      <p>
+        <a href="#" class="btn btn-success btn-lg" onclick="sendCommand('set')">Set the Meeting</a>
+        <a href="#" class="btn btn-danger btn-lg" style="margin-left: 15px;" onclick="sendCommand('clear')">Clear the Meeting</a>
+      </p>
+      <div id="alert_acknowledgements">
+        <p><a href="#" class="btn btn-lt btn-sm" onclick="acknowledgements()">Acknowledgements</a></p>
+      </div>
+    </div>
+  </header>
+</body>
+
 </html>

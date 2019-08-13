@@ -17,7 +17,7 @@ The HTML file has only undergone limited testing with:
 
 However, it should work with essentially all current endpoints and software.  Devices are supported whether standalone, registered to Cisco VCS or Expressway, registered to Cisco Unified Communications Manager, or registered to other 3rd party call control platforms.
 
-**Important note:** This has been tested, and works, with Webex Cloud registered endpoints. However it does require accessing the endpoint's "Advanced Settings" via the Webex Control Hub and creating an "admin" user. Because this is an undocumented API, ROOMCONTROL and INTEGRATOR user account roles do not work to push there OBTP button out to the endpoint; it has to be the admin user credentials that you create above.
+**Important note:** This has been tested, and works, with Webex Cloud registered endpoints (those running "RoomOS," which is essentially the same as CE under the covers). However it does require accessing the endpoint's "Advanced Settings" via the Webex Control Hub and creating an "admin" user. Because this tool uses an undocumented ("private") API, ROOMCONTROL and INTEGRATOR user account roles do not work; it has to be the admin user credentials that you create above.
 
 ## Hard coded meeting variables
 
@@ -45,7 +45,7 @@ Due to browser JavaScript sandboxing and lack of CORS support on Cisco TelePrese
 
 ## Authors
 
-* Nick Mueller, [CDW](http://www.cdw.com)
+* Nick Mueller, [Poly](http://www.poly.com)
 
 ## License
 
@@ -53,5 +53,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgements
 
-* Hat tip to James Adams, CDW, for challenging me with the idea
+* Hat tip to James Adams, formerly of CDW, for challenging me with the idea
 * Hat tip to David Bruun-Lie, Cisco Systems, for some code pointers
